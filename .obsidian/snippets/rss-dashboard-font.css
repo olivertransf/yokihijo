@@ -1,0 +1,34 @@
+/* RSS Dashboard — larger feed text
+   Adjust the font-size values to taste. */
+
+/* Feed item titles in the list/grid */
+.rss-dashboard-container .feed-item-title,
+.rss-dashboard-container .article-title,
+.rss-dashboard-container .rss-item-title,
+.rss-dashboard-container .item-title {
+    font-size: 1rem !important;
+}
+
+/* Feed item description / summary text */
+.rss-dashboard-container .feed-item-description,
+.rss-dashboard-container .article-description,
+.rss-dashboard-container .item-description,
+.rss-dashboard-container .rss-item-description {
+    font-size: 0.9rem !important;
+}
+
+/* Sidebar feed/folder names */
+.rss-dashboard-container .feed-name,
+.rss-dashboard-container .folder-name,
+.rss-dashboard-container .sidebar-item,
+.rss-dashboard-container .rss-folder-name {
+    font-size: 0.9rem !important;
+}
+
+/* Reader view body text */
+.rss-reader-view,
+.rss-reader-view p,
+.rss-reader-view li {
+    font-size: 1.05rem !important;
+    line-height: 1.7 !important;
+}

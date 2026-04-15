@@ -1,0 +1,46 @@
+# Ignore everything
+*
+
+# Except .obsidian config
+!.obsidian/
+!.obsidian/**
+
+# Plugin state: API keys (Google Books / Book Search, REST API, etc.), tokens, feeds — never commit
+.obsidian/plugins/*/data.json
+.obsidian/plugins/*/*/data.json
+
+# Secrets (copied from SpotifyStats for local plugin use; never commit)
+.obsidian/plugins/spotify-stats-view/.env
+.obsidian/plugins/**/*.env
+
+# Bundled MCP server binary (~60MB); reinstall from plugin or copy locally
+.obsidian/plugins/mcp-tools/bin/mcp-server
+
+# YouTube homepage → RSS sync last-run marker (local machine)
+.obsidian/scripts/.youtube_homepage_last_sync_epoch
+
+.obsidian/scripts/__pycache__/
+.obsidian/scripts/chrome-youtube-session/
+.obsidian/plugins/rss-dashboard/data.json.bak
+
+# iCloud duplicate filenames (space before "2")
+**/*\ 2.css
+**/*\ 2.js
+**/*\ 2.json
+**/*\ 2.md
+**/*\ 2.py
+
+# Always ignore generated/noisy files inside .obsidian
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache
+.obsidian/.cache
+
+# Ignore this gitignore itself from being noisy (keep it tracked though)
+!.gitignore
+
+
+
+
+# Ignore Smart Environment folder
+.smart-env

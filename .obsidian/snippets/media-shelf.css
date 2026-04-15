@@ -1,0 +1,60 @@
+/* Media Shelf — bookshelf-style cover art in Bases tables */
+
+/* Make the cover column cells show images as tall thumbnails */
+.bases-table td[data-column="formula.cover"],
+.bases-table td[data-column="cover"] {
+  padding: 4px 6px;
+  width: 80px;
+  min-width: 80px;
+  max-width: 80px;
+}
+
+.bases-table td[data-column="formula.cover"] img,
+.bases-table td[data-column="cover"] img {
+  display: block;
+  width: 72px;
+  height: 108px;
+  object-fit: cover;
+  border-radius: 4px;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* Row height to match cover */
+.bases-table tr:has(td[data-column="formula.cover"] img) {
+  height: 116px;
+}
+
+/* Tighten title column */
+.bases-table td[data-column="title"] {
+  font-weight: 600;
+  font-size: 0.9em;
+  vertical-align: middle;
+  max-width: 200px;
+}
+
+/* Year, status, genres — smaller and centered */
+.bases-table td[data-column="year"],
+.bases-table td[data-column="status"] {
+  font-size: 0.8em;
+  text-align: center;
+  vertical-align: middle;
+  color: var(--text-muted);
+}
+
+/* Status pill badge */
+.bases-table td[data-column="status"] .cell-content {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  font-size: 0.75em;
+  font-weight: 500;
+}
+
+/* Hide the cover column header label */
+.bases-table th[data-column="formula.cover"],
+.bases-table th[data-column="cover"] {
+  width: 80px;
+  min-width: 80px;
+}

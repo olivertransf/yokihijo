@@ -1,0 +1,211 @@
+/*
+  YouTube in Obsidian:
+  - Markdown ![](youtube) → iframe.external-embed (src often releases.obsidian.md/youtube…)
+  - RSS Dashboard / raw HTML → iframe[src*="youtube.com/embed"] (no .external-embed)
+
+  Full-width notes: drop readable line caps when the note embeds YouTube.
+  Side padding: set on .markdown-preview-view (core already pads with --file-margins).
+  Do not use calc(var(--file-margins) + X) — --file-margins is often two values and invalidates calc.
+
+  Optional frontmatter: cssclasses: note-full-width
+
+  Tune: --youtube-note-pad-inline, --youtube-note-pad-block
+*/
+
+body {
+  --youtube-note-pad-inline: 1rem;
+  --youtube-note-pad-block: var(--file-margins);
+}
+
+/* Any iframe that is a YouTube embed (core + RSS/raw HTML) */
+body
+  .markdown-preview-view
+  :is(
+    iframe.external-embed[src*="youtube"],
+    iframe.external-embed[src*="youtu.be"],
+    iframe[src*="youtube.com/embed"],
+    iframe[src*="youtube-nocookie.com/embed"]
+  ),
+body
+  .markdown-source-view.mod-cm6
+  :is(
+    iframe.external-embed[src*="youtube"],
+    iframe.external-embed[src*="youtu.be"],
+    iframe[src*="youtube.com/embed"],
+    iframe[src*="youtube-nocookie.com/embed"]
+  ) {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 16 / 9;
+  min-height: 0 !important;
+}
+
+/* Note contains any YouTube-style embed */
+body
+  .markdown-preview-view:has(
+    :is(
+      iframe.external-embed[src*="youtube"],
+      iframe.external-embed[src*="youtu.be"],
+      iframe[src*="youtube.com/embed"],
+      iframe[src*="youtube-nocookie.com/embed"]
+    )
+  ) {
+  padding-inline: var(--youtube-note-pad-inline) !important;
+  padding-block: var(--youtube-note-pad-block) !important;
+  box-sizing: border-box !important;
+}
+
+/* ---- Reading / LP: sizer full width; padding lives on .markdown-preview-view above ---- */
+body
+  .markdown-preview-view:has(
+    :is(
+      iframe.external-embed[src*="youtube"],
+      iframe.external-embed[src*="youtu.be"],
+      iframe[src*="youtube.com/embed"],
+      iframe[src*="youtube-nocookie.com/embed"]
+    )
+  )
+  .markdown-preview-sizer {
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box !important;
+}
+
+body
+  .cm-scroller
+  .markdown-preview-view:has(
+    :is(
+      iframe.external-embed[src*="youtube"],
+      iframe.external-embed[src*="youtu.be"],
+      iframe[src*="youtube.com/embed"],
+      iframe[src*="youtube-nocookie.com/embed"]
+    )
+  )
+  .markdown-preview-sizer {
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* Hybrid: nested preview inside scroller — same side padding */
+body
+  .cm-scroller
+  .markdown-preview-view:has(
+    :is(
+      iframe.external-embed[src*="youtube"],
+      iframe.external-embed[src*="youtu.be"],
+      iframe[src*="youtube.com/embed"],
+      iframe[src*="youtube-nocookie.com/embed"]
+    )
+  ) {
+  padding-inline: var(--youtube-note-pad-inline) !important;
+  padding-block: var(--youtube-note-pad-block) !important;
+  box-sizing: border-box !important;
+}
+
+/* ---- Editor / Live Preview: drop line-length caps ---- */
+body
+  .markdown-source-view.mod-cm6:has(
+    :is(
+      iframe.external-embed[src*="youtube"],
+      iframe.external-embed[src*="youtu.be"],
+      iframe[src*="youtube.com/embed"],
+      iframe[src*="youtube-nocookie.com/embed"]
+    )
+  )
+  .cm-sizer {
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+body
+  .markdown-source-view.mod-cm6:has(
+    :is(
+      iframe.external-embed[src*="youtube"],
+      iframe.external-embed[src*="youtu.be"],
+      iframe[src*="youtube.com/embed"],
+      iframe[src*="youtube-nocookie.com/embed"]
+    )
+  )
+  .cm-content {
+  max-width: none !important;
+}
+
+body
+  .markdown-source-view.mod-cm6:has(
+    :is(
+      iframe.external-embed[src*="youtube"],
+      iframe.external-embed[src*="youtu.be"],
+      iframe[src*="youtube.com/embed"],
+      iframe[src*="youtube-nocookie.com/embed"]
+    )
+  )
+  .cm-line:not(.HyperMD-table-row) {
+  max-width: none !important;
+}
+
+/*
+  LP / source: restore strong side padding without calc(+ file-margins).
+  Shorthand first, then override horizontal only.
+*/
+body
+  .markdown-source-view.mod-cm6:has(
+    :is(
+      iframe.external-embed[src*="youtube"],
+      iframe.external-embed[src*="youtu.be"],
+      iframe[src*="youtube.com/embed"],
+      iframe[src*="youtube-nocookie.com/embed"]
+    )
+  )
+  .cm-scroller {
+  padding: var(--file-margins) !important;
+  padding-inline: var(--youtube-note-pad-inline) !important;
+  box-sizing: border-box !important;
+}
+
+/* ---- Manual: cssclasses: note-full-width (any note) ---- */
+body .markdown-preview-view.note-full-width {
+  padding-inline: var(--youtube-note-pad-inline) !important;
+  padding-block: var(--youtube-note-pad-block) !important;
+  box-sizing: border-box !important;
+}
+
+body .markdown-preview-view.note-full-width .markdown-preview-sizer,
+body
+  .cm-scroller
+  .markdown-preview-view.note-full-width
+  .markdown-preview-sizer {
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+body .cm-scroller .markdown-preview-view.note-full-width {
+  padding-inline: var(--youtube-note-pad-inline) !important;
+  padding-block: var(--youtube-note-pad-block) !important;
+}
+
+body .markdown-source-view.mod-cm6.note-full-width .cm-sizer {
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+body .markdown-source-view.mod-cm6.note-full-width .cm-content {
+  max-width: none !important;
+}
+
+body
+  .markdown-source-view.mod-cm6.note-full-width
+  .cm-line:not(.HyperMD-table-row) {
+  max-width: none !important;
+}
+
+body .markdown-source-view.mod-cm6.note-full-width .cm-scroller {
+  padding: var(--file-margins) !important;
+  padding-inline: var(--youtube-note-pad-inline) !important;
+}

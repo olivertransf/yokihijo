@@ -1,0 +1,4 @@
+selenium>=4.15.0
+setuptools>=69.0.0
+browser-cookie3>=0.19.1
+undetected-chromedriver>=3.5.5

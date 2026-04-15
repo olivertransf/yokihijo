@@ -1,0 +1,84 @@
+.gs-root {
+  padding: 20px 20px 0 20px !important;
+}
+
+.gs-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+}
+
+/* Header row: title left, date right — all on one line */
+.gs-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5em;
+}
+
+.gs-title {
+  font-weight: 600;
+  font-size: var(--font-ui-medium);
+  white-space: nowrap;
+}
+
+.gs-date {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Status bar */
+.gs-status {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.gs-status--hidden {
+  display: none;
+}
+
+.gs-status--error {
+  color: var(--text-error);
+}
+
+/* Metric grid — 3 columns */
+.gs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.35em 0.4em;
+}
+
+.gs-metric {
+  background: var(--background-secondary);
+  border-radius: var(--radius-s);
+  padding: 0.35em 0.45em;
+  min-width: 0;
+}
+
+.gs-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-bottom: 0.1em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gs-value {
+  font-variant-numeric: tabular-nums;
+  font-size: var(--font-ui-smaller);
+  font-weight: 500;
+  word-break: break-word;
+}
+
+/* Footer */
+.gs-foot {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+  line-height: 1.35;
+}

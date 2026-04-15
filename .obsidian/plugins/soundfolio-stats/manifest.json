@@ -1,0 +1,9 @@
+{
+  "id": "soundfolio-stats",
+  "name": "Soundfolio Stats",
+  "version": "1.0.0",
+  "minAppVersion": "0.16.0",
+  "description": "Spotify/Last.fm listening stats from Neon DB with charts.",
+  "author": "olivertran",
+  "isDesktopOnly": true
+}

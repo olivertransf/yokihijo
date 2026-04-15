@@ -1,0 +1,13 @@
+{
+  "pythonPath": "python3",
+  "tokenstorePath": "",
+  "scriptPath": "",
+  "showSteps": true,
+  "showDistance": true,
+  "showActiveKcal": true,
+  "showRestingHR": true,
+  "showSleep": true,
+  "showSleepScore": true,
+  "showStress": true,
+  "showBodyBattery": true
+}

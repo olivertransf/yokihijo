@@ -1,0 +1,23 @@
+/*
+  iPad / large mobile: slightly larger note text.
+  Uses direct font-size (not overriding --font-text-size on body — that can recurse / be ignored).
+  - body.is-tablet = iPad
+  - body.is-mobile:not(.is-phone) = fallback when tablet class is missing
+*/
+body.is-tablet .markdown-source-view.mod-cm6 .cm-content,
+body.is-mobile:not(.is-phone) .markdown-source-view.mod-cm6 .cm-content,
+body.is-tablet .markdown-preview-view.markdown-rendered,
+body.is-mobile:not(.is-phone) .markdown-preview-view.markdown-rendered,
+body.is-tablet .markdown-reading-view .markdown-rendered,
+body.is-mobile:not(.is-phone) .markdown-reading-view .markdown-rendered {
+	font-size: calc(var(--font-text-size) * 1.17) !important;
+}
+
+/* Optional: small UI bump */
+body.is-tablet,
+body.is-mobile:not(.is-phone) {
+	--font-ui-smaller: calc(var(--font-ui-smaller) * 1.04);
+	--font-ui-small: calc(var(--font-ui-small) * 1.04);
+	--font-ui-medium: calc(var(--font-ui-medium) * 1.04);
+	--font-ui-large: calc(var(--font-ui-large) * 1.04);
+}

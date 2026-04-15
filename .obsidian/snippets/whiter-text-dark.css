@@ -1,0 +1,5 @@
+/* Dark theme: brighter body + secondary text (uses Border accent hue). Tweak last % in each hsl() if needed. */
+.theme-dark {
+    --text-normal: hsl(var(--accent-h), 12%, 94%);
+    --text-muted: hsl(var(--accent-h), 10%, 82%);
+}

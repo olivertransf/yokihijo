@@ -1,0 +1,9 @@
+{
+  "id": "webviewer-clip-youtube",
+  "name": "Web Viewer Clip YouTube",
+  "version": "1.0.0",
+  "minAppVersion": "1.5.0",
+  "description": "Save the current Web Viewer YouTube page as a vault note (title + embedded video).",
+  "author": "local",
+  "isDesktopOnly": true
+}

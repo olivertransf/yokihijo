@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.yokihijo.youtube-rss-sync</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/bin/bash</string>
+		<!-- Replace with the real path to run_sync_youtube_homepage.sh (spaces OK). -->
+		<string>/Users/olivertran/Library/Mobile Documents/iCloud~md~obsidian/Documents/Yokihijo/.obsidian/scripts/run_sync_youtube_homepage.sh</string>
+	</array>
+	<key>StartCalendarInterval</key>
+	<dict>
+		<key>Hour</key>
+		<integer>7</integer>
+		<key>Minute</key>
+		<integer>30</integer>
+	</dict>
+	<key>StandardOutPath</key>
+	<string>/tmp/youtube-rss-sync.log</string>
+	<key>StandardErrorPath</key>
+	<string>/tmp/youtube-rss-sync.err.log</string>
+</dict>
+</plist>

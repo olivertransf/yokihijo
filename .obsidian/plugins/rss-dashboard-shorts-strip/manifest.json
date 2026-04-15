@@ -1,0 +1,10 @@
+{
+  "id": "rss-dashboard-shorts-strip",
+  "name": "RSS Dashboard — strip Shorts",
+  "version": "1.1.0",
+  "minAppVersion": "1.5.0",
+  "description": "Removes YouTube Shorts URLs from RSS Dashboard cache whenever data.json changes (works on mobile).",
+  "author": "Yokihijo vault",
+  "isDesktopOnly": false,
+  "main": "main.js"
+}

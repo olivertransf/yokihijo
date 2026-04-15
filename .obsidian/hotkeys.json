@@ -1,0 +1,10 @@
+{
+  "editor:toggle-readable-line-length": [
+    {
+      "modifiers": [
+        "Ctrl"
+      ],
+      "key": "L"
+    }
+  ]
+}

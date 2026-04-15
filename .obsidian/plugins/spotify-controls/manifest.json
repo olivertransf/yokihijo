@@ -1,0 +1,9 @@
+{
+  "id": "spotify-controls",
+  "name": "Spotify Controls",
+  "version": "1.1.3",
+  "minAppVersion": "0.15.0",
+  "description": "Control Spotify playback via AppleScript. No Premium required.",
+  "author": "Oliver Tran",
+  "isDesktopOnly": true
+}

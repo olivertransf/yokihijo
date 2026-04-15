@@ -1,0 +1,27 @@
+/*
+  Velocity: hide H1-style ::after bar on the inline title.
+  Border (patched vault): no border; spacing comes from padding below.
+*/
+.inline-title::after {
+	display: none !important;
+	content: none !important;
+}
+
+body:not(.is-phone) .inline-title:not(.mk-inline-title) {
+	border-bottom: none !important;
+	margin-bottom: 0 !important;
+}
+
+.inline-title:not(.mk-inline-title) {
+	padding-bottom: var(--size-4-5) !important;
+}
+
+/*
+  Daily Notes Editor (list): plugin uses padding: 0 var(--size-4-4) !important on
+  .daily-note-title.inline-title, which zeros out bottom padding from the rule above.
+*/
+body:not(.is-phone) .daily-note-view .daily-note .daily-note-title.inline-title,
+body.is-tablet .daily-note-view .daily-note .daily-note-title.inline-title,
+body.is-phone .daily-note-view .daily-note .daily-note-title.inline-title {
+	padding-bottom: var(--size-4-6) !important;
+}

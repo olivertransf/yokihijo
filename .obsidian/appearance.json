@@ -1,0 +1,23 @@
+{
+  "cssTheme": "Border",
+  "showRibbon": false,
+  "baseFontSize": 18,
+  "baseFontSizeAction": true,
+  "translucency": true,
+  "theme": "system",
+  "enabledCssSnippets": [
+    "daily-notes-editor-title-padding",
+    "media-shelf",
+    "claude-usage-compact",
+    "velocity-no-titlebar-line",
+    "whiter-text-dark",
+    "task-genius-habit-heatmap",
+    "ipad-font-slightly-larger",
+    "youtube-embed-full-width"
+  ],
+  "interfaceFontFamily": "Atkinson Hyperlegible",
+  "monospaceFontFamily": "Atkinson Hyperlegible Mono,Source Code Pro",
+  "textFontFamily": "Atkinson Hyperlegible,Inter,Trebuchet MS",
+  "accentColor": "",
+  "nativeMenus": true
+}

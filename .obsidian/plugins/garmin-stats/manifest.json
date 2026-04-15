@@ -1,0 +1,9 @@
+{
+  "id": "garmin-stats",
+  "name": "Garmin stats",
+  "version": "1.0.0",
+  "minAppVersion": "0.16.0",
+  "description": "Shows daily Garmin Connect health and activity stats via the garminconnect Python library.",
+  "author": "olivertran",
+  "isDesktopOnly": true
+}

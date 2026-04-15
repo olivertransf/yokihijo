@@ -1,0 +1,70 @@
+/* Task Genius — Habit view
+   Cards: compact single row (name + checkbox only).
+   Heatmap modal: clean interactive cells that work within the scrollable container. */
+
+/* ── Habit cards ───────────────────────────────────────────────────────── */
+
+.habit-card .card-content-wrapper {
+  display: none;
+}
+
+.habit-card {
+  height: auto;
+  min-height: 0;
+}
+
+.habit-card .card-header {
+  padding: 0.75rem 1rem;
+}
+
+.habit-name:hover {
+  text-decoration: underline;
+  color: var(--interactive-accent);
+  cursor: pointer;
+}
+
+/* ── Heatmap modal (opens when you click the habit name) ───────────────── */
+
+/* Cells: use outline + brightness on hover so scaling doesn't get clipped
+   by the overflow:auto on .habit-chart-heatmap */
+.heatmap-cell {
+  transition: filter 0.1s ease, outline-color 0.1s ease;
+  outline: 1.5px solid transparent;
+  outline-offset: -1px;
+}
+
+.heatmap-cell:hover {
+  filter: brightness(1.4);
+  outline-color: var(--interactive-accent);
+  cursor: pointer;
+}
+
+.heatmap-cell:active {
+  filter: brightness(0.7);
+}
+
+/* Filled cells get a saturation bump */
+.heatmap-cell.filled:hover {
+  filter: brightness(1.2) saturate(1.4);
+}
+
+/* Today ring */
+.heatmap-cell.is-today {
+  outline-color: var(--text-muted);
+  outline-offset: -1.5px;
+}
+
+.heatmap-cell.is-today:hover {
+  outline-color: var(--interactive-accent);
+}
+
+/* Slightly larger cells in the modal for easier tapping */
+.habit-chart-heatmap .heatmap-md .heatmap-cell {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+/* Give the heatmap container room to breathe */
+.habit-chart-heatmap {
+  padding: 4px 0;
+}

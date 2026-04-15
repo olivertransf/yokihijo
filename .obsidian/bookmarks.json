@@ -1,0 +1,110 @@
+{
+  "items": [
+    {
+      "type": "file",
+      "ctime": 1772733195624,
+      "path": "Personal/Dashboard 2026.md"
+    },
+    {
+      "type": "file",
+      "ctime": 1773439231081,
+      "path": "School/JR 25-26/School Dashboard.md"
+    },
+    {
+      "type": "file",
+      "ctime": 1773882150782,
+      "path": "Personal/Workouts.md"
+    },
+    {
+      "type": "file",
+      "ctime": 1773882159447,
+      "path": "Personal/Reading Plan.md"
+    },
+    {
+      "type": "file",
+      "ctime": 1773882243485,
+      "path": "Media/Notable Quotes.md"
+    },
+    {
+      "type": "group",
+      "ctime": 1774588584005,
+      "items": [
+        {
+          "type": "url",
+          "ctime": 1774588553196,
+          "url": "https://ticktick.com/webapp/#p/inbox/tasks",
+          "title": "TickTick"
+        },
+        {
+          "type": "url",
+          "ctime": 1774588077284,
+          "url": "https://claude.ai/new",
+          "title": "Claude"
+        },
+        {
+          "type": "url",
+          "ctime": 1774063408919,
+          "url": "https://www.perplexity.ai/",
+          "title": "Perplexity"
+        }
+      ],
+      "title": "Utilities"
+    },
+    {
+      "type": "group",
+      "ctime": 1774588597138,
+      "items": [
+        {
+          "type": "url",
+          "ctime": 1775592324702,
+          "url": "https://olivertransf.vercel.app/",
+          "title": "Oliver Tran"
+        },
+        {
+          "type": "url",
+          "ctime": 1773879625052,
+          "url": "https://freespotstats.netlify.app/me",
+          "title": "Spotify Stats"
+        },
+        {
+          "type": "file",
+          "ctime": 1774737790871,
+          "path": "03 - Resources/Bases/Media Shelf.base"
+        }
+      ],
+      "title": "References"
+    },
+    {
+      "type": "group",
+      "ctime": 1774588574929,
+      "items": [
+        {
+          "type": "folder",
+          "ctime": 1774588512916,
+          "path": "04 - Archives"
+        },
+        {
+          "type": "folder",
+          "ctime": 1774588508561,
+          "path": "03 - Resources"
+        },
+        {
+          "type": "folder",
+          "ctime": 1774588503292,
+          "path": "02 - Areas"
+        },
+        {
+          "type": "folder",
+          "ctime": 1774588494073,
+          "path": "01 - Projects"
+        },
+        {
+          "type": "file",
+          "ctime": 1774587908583,
+          "path": "Dashboard 2026.md"
+        }
+      ],
+      "title": "Core"
+    }
+  ]
+}

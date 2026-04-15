@@ -1,0 +1,9 @@
+{
+  "id": "claude-usage",
+  "name": "Claude usage",
+  "version": "1.2.0",
+  "minAppVersion": "0.16.0",
+  "description": "5h / 7d usage from the Claude Usage app (HamedElfayome.Claude-Usage.plist).",
+  "author": "olivertran",
+  "isDesktopOnly": true
+}

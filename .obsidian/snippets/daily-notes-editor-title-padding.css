@@ -1,0 +1,649 @@
+.daily-note-view .daily-note .collapse-button {
+  display: none !important;
+}
+
+body.is-phone .daily-note-view .daily-note .daily-note-title.inline-title {
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: var(--size-4-4) !important;
+  padding-right: var(--size-4-4) !important;
+  box-sizing: border-box !important;
+}
+
+/* iPad: push the date text right via the inner link; row padding can be overridden. */
+@media (pointer: coarse) and (min-width: 768px) {
+  .daily-note-view .daily-note > div:first-child,
+  .daily-note-view .daily-note .daily-note-title.inline-title {
+    max-width: none !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 0 !important;
+    padding-right: var(--size-4-4) !important;
+    box-sizing: border-box !important;
+  }
+  .daily-note-view .daily-note > div:first-child .clickable-link,
+  .daily-note-view .daily-note .daily-note-title .clickable-link {
+    margin-left: calc(
+      (100% - var(--file-line-width)) / 2 + var(--size-4-4) - 17px
+    ) !important;
+  }
+}
+
+@media (min-width: 768px) {
+  body:not(.is-mobile)
+    .daily-note-view
+    .daily-note
+    .daily-note-title.inline-title {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: max(
+      var(--size-4-4),
+      calc((100% - var(--file-line-width)) / 2)
+    ) !important;
+    padding-right: var(--size-4-4) !important;
+  }
+}
+
+/* Google Calendar: multiline titles + better pill centering */
+.googleCalendarEvent,
+.googleCalendarEvent .googleCalendarName,
+.gcal-schedule-event-title-container,
+.gcal-schedule-event-title {
+  min-width: 0 !important;
+}
+
+/* Google Calendar: hide month/day indicator dots. */
+.googleCalendarDailyDot,
+#calendar-container [class^="googleCalendarDot_"],
+#calendar-container [class*=" googleCalendarDot_"] {
+  display: none !important;
+  fill: transparent !important;
+  stroke: transparent !important;
+}
+
+.googleCalendarEvent {
+  box-sizing: border-box !important;
+  align-items: center !important;
+  padding: 4px 10px !important;
+}
+
+.googleCalendarEvent .googleCalendarName {
+  display: -webkit-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 3 !important;
+  line-clamp: 3 !important;
+  line-height: 1.2 !important;
+  max-height: 3.6em !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+}
+
+.googleCalendarEvent.event-lines-1 .googleCalendarName {
+  white-space: nowrap !important;
+  display: block !important;
+  -webkit-line-clamp: 1 !important;
+  line-clamp: 1 !important;
+  max-height: 1.2em !important;
+}
+
+.googleCalendarEvent.event-lines-2 .googleCalendarName {
+  white-space: normal !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  line-clamp: 2 !important;
+  max-height: 2.4em !important;
+}
+
+.googleCalendarEvent.event-lines-3 .googleCalendarName {
+  white-space: normal !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 3 !important;
+  line-clamp: 3 !important;
+  max-height: 3.6em !important;
+}
+
+/* Keep schedule list titles stable when selecting/clicking events */
+.gcal-schedule-event-title {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  line-height: 1.2 !important;
+  max-height: none !important;
+  -webkit-line-clamp: unset !important;
+  line-clamp: unset !important;
+}
+
+/* All-day pills: let height grow with title text */
+.googleCalendarEvent_AllDay {
+  height: auto !important;
+  min-height: 23px !important;
+  align-items: flex-start !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+}
+
+.googleCalendarEvent_AllDay .googleCalendarName_AllDay {
+  display: block !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+}
+
+/* Month view: inline selected-day event list under calendar */
+.gcal-inline-day-details {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  background: var(--background-secondary);
+}
+
+.gcal-inline-day-header {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.gcal-inline-day-event {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 0;
+  border-top: 1px solid var(--background-modifier-border-hover);
+  cursor: pointer;
+}
+
+.gcal-inline-day-event:first-of-type {
+  border-top: none;
+}
+
+.gcal-inline-day-time {
+  font-size: 0.85em;
+  color: var(--text-muted);
+}
+
+.gcal-inline-day-title {
+  line-height: 1.25;
+}
+
+.gcal-inline-day-empty {
+  color: var(--text-muted);
+}
+
+/* Use a readable max width */
+.gcal-calendar-container,
+#calendar-container {
+  max-width: 860px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Task Genius mobile quick capture: show only text box + add/save area. */
+body.is-phone .quick-capture-modal:not(.minimal):not(.tg-minimal-capture-modal),
+body.is-mobile
+  .quick-capture-modal:not(.minimal):not(.tg-minimal-capture-modal) {
+  width: min(96vw, 680px) !important;
+  max-width: 96vw !important;
+  max-height: 88vh !important;
+  margin-top: 5vh !important;
+}
+
+/* Pin modal to top edge on mobile to maximize vertical space. */
+body.is-phone
+  .modal-container:has(
+    .quick-capture-modal:not(.minimal):not(.tg-minimal-capture-modal)
+  ),
+body.is-mobile
+  .modal-container:has(
+    .quick-capture-modal:not(.minimal):not(.tg-minimal-capture-modal)
+  ) {
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  padding-top: 0 !important;
+}
+
+/* Hide all details/config UI. */
+body.is-phone
+  .quick-capture-modal:not(.minimal):not(.tg-minimal-capture-modal)
+  .quick-capture-header,
+body.is-mobile
+  .quick-capture-modal:not(.minimal):not(.tg-minimal-capture-modal)
+  .quick-capture-header,
+body.is-phone
+  .quick-capture-modal:not(.minimal):not(.tg-minimal-capture-modal)
+  .quick-capture-tabs,
+body.is-mobile
+  .quick-capture-modal:not(.minimal):not(.tg-minimal-capture-modal)
+  .quick-capture-tabs,
+body.is-phone
+  .quick-capture-modal:not(.minimal):not(.tg-minimal-capture-modal)
+  .quick-capture-clear,
+body.is-mobile
+  .quick-capture-modal:not(.minimal):not(.tg-minimal-capture-modal)
+  .quick-capture-clear,
+body.is-phone
+  .quick-capture-modal:not(.minimal):not(.tg-minimal-capture-modal)
+  .quick-capture-target-container,
+body.is-mobile
+  .quick-capture-modal:not(.minimal):not(.tg-minimal-capture-modal)
+  .quick-capture-target-container,
+body.is-phone
+  .quick-capture-modal:not(.minimal):not(.tg-minimal-capture-modal)
+  .quick-capture-config-panel,
+body.is-mobile
+  .quick-capture-modal:not(.minimal):not(.tg-minimal-capture-modal)
+  .quick-capture-config-panel,
+body.is-phone
+  .quick-capture-modal:not(.minimal):not(.tg-minimal-capture-modal)
+  .quick-capture-section-title,
+body.is-mobile
+  .quick-capture-modal:not(.minimal):not(.tg-minimal-capture-modal)
+  .quick-capture-section-title {
+  display: none !important;
+}
+
+/* Keep editor + buttons visible and simple. */
+body.is-phone
+  .quick-capture-modal:not(.minimal):not(.tg-minimal-capture-modal)
+  .quick-capture-layout,
+body.is-mobile
+  .quick-capture-modal:not(.minimal):not(.tg-minimal-capture-modal)
+  .quick-capture-layout {
+  display: block !important;
+  margin-bottom: 8px !important;
+}
+
+body.is-phone
+  .quick-capture-modal:not(.minimal):not(.tg-minimal-capture-modal)
+  .quick-capture-modal-editor,
+body.is-mobile
+  .quick-capture-modal:not(.minimal):not(.tg-minimal-capture-modal)
+  .quick-capture-modal-editor {
+  min-height: calc(1.35em * 3 + 20px) !important;
+  max-height: calc(1.35em * 3 + 20px) !important;
+  overflow-y: auto !important;
+  margin-bottom: 8px !important;
+}
+
+body.is-phone
+  .quick-capture-modal:not(.minimal):not(.tg-minimal-capture-modal)
+  .quick-capture-modal-buttons,
+body.is-mobile
+  .quick-capture-modal:not(.minimal):not(.tg-minimal-capture-modal)
+  .quick-capture-modal-buttons {
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+}
+
+/* Task Genius: iPhone-friendly spacing and tap targets. */
+body.is-phone .task-genius-view,
+body.is-phone .task-genius-fluent-view,
+body.is-phone .task-genius-container {
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+}
+
+body.is-phone .task-genius-view .content-header,
+body.is-phone .task-genius-fluent-view .content-header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--background-primary);
+}
+
+/* Task Genius: keep quick-capture trigger at top-right on iPhone. */
+body.is-phone div[data-type^="tg-timeline-sidebar-view"] .quick-capture-btn,
+body.is-phone
+  div[data-type^="tg-timeline-sidebar-view"]
+  .collapsed-quick-capture {
+  position: fixed !important;
+  right: 14px !important;
+  top: calc(14px + env(safe-area-inset-top)) !important;
+  bottom: auto !important;
+  z-index: 1000 !important;
+}
+
+/* Habit heatmap: clickable one-row week (7 dots) with day labels on phone. */
+body.is-phone
+  .tg-habit-component-container
+  .heatmap-sm
+  .heatmap-container-simple,
+body.is-phone
+  .tg-habit-component-container
+  .heatmap-md
+  .heatmap-container-simple {
+  grid-template-columns: repeat(7, min-content) !important;
+  grid-auto-flow: column !important;
+  justify-content: center !important;
+  justify-items: center !important;
+  gap: 6px !important;
+  overflow: hidden !important;
+  max-width: 100% !important;
+  padding-bottom: 16px !important;
+}
+
+body.is-phone
+  .tg-habit-component-container
+  .heatmap-sm
+  .heatmap-container-simple {
+  max-height: none !important;
+}
+
+body.is-phone
+  .tg-habit-component-container
+  .heatmap-md
+  .heatmap-container-simple {
+  max-height: none !important;
+}
+
+body.is-phone .tg-habit-component-container .heatmap-cell,
+body.is-phone .tg-habit-component-container .heatmap-cell-dot {
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  touch-action: manipulation !important;
+  z-index: 2 !important;
+}
+
+/* Hard cap to exactly 7 clickable dots (single row). */
+body.is-phone
+  .tg-habit-component-container
+  .heatmap-container-simple
+  > .heatmap-cell:nth-child(n + 8),
+body.is-phone
+  .tg-habit-component-container
+  .heatmap-container-simple
+  > .heatmap-cell-dot:nth-child(n + 8) {
+  display: none !important;
+}
+
+/* Pin weekday labels to each dot so columns always align. */
+body.is-phone
+  .tg-habit-component-container
+  .heatmap-container-simple
+  > .heatmap-cell:nth-child(-n + 7),
+body.is-phone
+  .tg-habit-component-container
+  .heatmap-container-simple
+  > .heatmap-cell-dot:nth-child(-n + 7) {
+  position: relative;
+}
+
+body.is-phone
+  .tg-habit-component-container
+  .heatmap-container-simple
+  > .heatmap-cell:nth-child(1)::after,
+body.is-phone
+  .tg-habit-component-container
+  .heatmap-container-simple
+  > .heatmap-cell-dot:nth-child(1)::after {
+  content: "M";
+}
+body.is-phone
+  .tg-habit-component-container
+  .heatmap-container-simple
+  > .heatmap-cell:nth-child(2)::after,
+body.is-phone
+  .tg-habit-component-container
+  .heatmap-container-simple
+  > .heatmap-cell-dot:nth-child(2)::after {
+  content: "T";
+}
+body.is-phone
+  .tg-habit-component-container
+  .heatmap-container-simple
+  > .heatmap-cell:nth-child(3)::after,
+body.is-phone
+  .tg-habit-component-container
+  .heatmap-container-simple
+  > .heatmap-cell-dot:nth-child(3)::after {
+  content: "W";
+}
+body.is-phone
+  .tg-habit-component-container
+  .heatmap-container-simple
+  > .heatmap-cell:nth-child(4)::after,
+body.is-phone
+  .tg-habit-component-container
+  .heatmap-container-simple
+  > .heatmap-cell-dot:nth-child(4)::after {
+  content: "T";
+}
+body.is-phone
+  .tg-habit-component-container
+  .heatmap-container-simple
+  > .heatmap-cell:nth-child(5)::after,
+body.is-phone
+  .tg-habit-component-container
+  .heatmap-container-simple
+  > .heatmap-cell-dot:nth-child(5)::after {
+  content: "F";
+}
+body.is-phone
+  .tg-habit-component-container
+  .heatmap-container-simple
+  > .heatmap-cell:nth-child(6)::after,
+body.is-phone
+  .tg-habit-component-container
+  .heatmap-container-simple
+  > .heatmap-cell-dot:nth-child(6)::after {
+  content: "S";
+}
+body.is-phone
+  .tg-habit-component-container
+  .heatmap-container-simple
+  > .heatmap-cell:nth-child(7)::after,
+body.is-phone
+  .tg-habit-component-container
+  .heatmap-container-simple
+  > .heatmap-cell-dot:nth-child(7)::after {
+  content: "S";
+}
+
+body.is-phone
+  .tg-habit-component-container
+  .heatmap-container-simple
+  > .heatmap-cell:nth-child(-n + 7)::after,
+body.is-phone
+  .tg-habit-component-container
+  .heatmap-container-simple
+  > .heatmap-cell-dot:nth-child(-n + 7)::after {
+  position: absolute;
+  top: calc(100% + 3px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  line-height: 1;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+/* Ensure wrappers do not block tap/click on dots. */
+body.is-phone .tg-habit-component-container .tg-heatmap-root,
+body.is-phone .tg-habit-component-container .heatmap-container-simple {
+  pointer-events: auto !important;
+}
+
+/* Task Genius Inbox (phone): apply only when Inbox tab is active. */
+body.is-phone
+  .workspace-leaf-content[data-type="task-genius-view"]
+  .task-genius-container:has(.sidebar-nav-item[data-view-id="inbox"].is-active)
+  .task-content,
+body.is-phone
+  .workspace-leaf-content[data-type^="task-genius-view"]
+  .task-genius-container:has(.sidebar-nav-item[data-view-id="inbox"].is-active)
+  .task-content {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+body.is-phone
+  .workspace-leaf-content[data-type="task-genius-view"]
+  .task-genius-container:has(.sidebar-nav-item[data-view-id="inbox"].is-active)
+  .task-list-container,
+body.is-phone
+  .workspace-leaf-content[data-type^="task-genius-view"]
+  .task-genius-container:has(.sidebar-nav-item[data-view-id="inbox"].is-active)
+  .task-list-container {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  overflow-y: scroll !important;
+  overscroll-behavior-y: contain !important;
+  padding-bottom: calc(220px + env(safe-area-inset-bottom)) !important;
+  scroll-padding-bottom: calc(220px + env(safe-area-inset-bottom)) !important;
+}
+
+body.is-phone
+  .workspace-leaf-content[data-type="task-genius-view"]
+  .task-genius-container:has(.sidebar-nav-item[data-view-id="inbox"].is-active)
+  .task-list-wrapper,
+body.is-phone
+  .workspace-leaf-content[data-type^="task-genius-view"]
+  .task-genius-container:has(.sidebar-nav-item[data-view-id="inbox"].is-active)
+  .task-list-wrapper {
+  min-height: max-content !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+/* Add guaranteed end-of-list scroll space for floating mobile toolbar. */
+body.is-phone
+  .workspace-leaf-content[data-type="task-genius-view"]
+  .task-genius-container:has(.sidebar-nav-item[data-view-id="inbox"].is-active)
+  .task-list-wrapper::after,
+body.is-phone
+  .workspace-leaf-content[data-type^="task-genius-view"]
+  .task-genius-container:has(.sidebar-nav-item[data-view-id="inbox"].is-active)
+  .task-list-wrapper::after {
+  content: "";
+  display: block;
+  height: calc(260px + env(safe-area-inset-bottom));
+  width: 100%;
+}
+
+/* Extra fallback: add spacer on task-list layer too. */
+body.is-phone
+  .workspace-leaf-content[data-type="task-genius-view"]
+  .task-genius-container:has(.sidebar-nav-item[data-view-id="inbox"].is-active)
+  .task-list,
+body.is-phone
+  .workspace-leaf-content[data-type^="task-genius-view"]
+  .task-genius-container:has(.sidebar-nav-item[data-view-id="inbox"].is-active)
+  .task-list {
+  padding-bottom: calc(220px + env(safe-area-inset-bottom)) !important;
+}
+
+body.is-phone
+  .workspace-leaf-content[data-type="task-genius-view"]
+  .task-genius-container:has(.sidebar-nav-item[data-view-id="inbox"].is-active)
+  .task-list::after,
+body.is-phone
+  .workspace-leaf-content[data-type^="task-genius-view"]
+  .task-genius-container:has(.sidebar-nav-item[data-view-id="inbox"].is-active)
+  .task-list::after {
+  content: "";
+  display: block;
+  height: calc(260px + env(safe-area-inset-bottom));
+}
+
+/* Explicitly remove spacer behavior when Inbox is not active. */
+body.is-phone
+  .workspace-leaf-content[data-type="task-genius-view"]
+  .task-genius-container:not(
+    :has(.sidebar-nav-item[data-view-id="inbox"].is-active)
+  )
+  .task-list::after,
+body.is-phone
+  .workspace-leaf-content[data-type^="task-genius-view"]
+  .task-genius-container:not(
+    :has(.sidebar-nav-item[data-view-id="inbox"].is-active)
+  )
+  .task-list::after,
+body.is-phone
+  .workspace-leaf-content[data-type="task-genius-view"]
+  .task-genius-container:not(
+    :has(.sidebar-nav-item[data-view-id="inbox"].is-active)
+  )
+  .task-list-wrapper::after,
+body.is-phone
+  .workspace-leaf-content[data-type^="task-genius-view"]
+  .task-genius-container:not(
+    :has(.sidebar-nav-item[data-view-id="inbox"].is-active)
+  )
+  .task-list-wrapper::after {
+  content: none !important;
+}
+
+/* Task Genius scroll fallback: ensure view can always scroll on phone. */
+body.is-phone
+  .workspace-leaf-content[data-type="task-genius-view"]
+  .view-content,
+body.is-phone
+  .workspace-leaf-content[data-type^="task-genius-view"]
+  .view-content,
+body.is-phone
+  .workspace-leaf-content[data-type="task-genius-view"]
+  .task-genius-container,
+body.is-phone
+  .workspace-leaf-content[data-type^="task-genius-view"]
+  .task-genius-container,
+body.is-phone
+  .workspace-leaf-content[data-type="task-genius-view"]
+  .task-content,
+body.is-phone
+  .workspace-leaf-content[data-type^="task-genius-view"]
+  .task-content,
+body.is-phone
+  .workspace-leaf-content[data-type="task-genius-view"]
+  .task-list-container,
+body.is-phone
+  .workspace-leaf-content[data-type^="task-genius-view"]
+  .task-list-container {
+  min-height: 0 !important;
+}
+
+body.is-phone
+  .workspace-leaf-content[data-type="task-genius-view"]
+  .task-list-container,
+body.is-phone
+  .workspace-leaf-content[data-type^="task-genius-view"]
+  .task-list-container {
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior-y: contain !important;
+  padding-bottom: calc(220px + env(safe-area-inset-bottom)) !important;
+  scroll-padding-bottom: calc(220px + env(safe-area-inset-bottom)) !important;
+}
+
+/* EPUB mobile: use full width and keep scrolling inside reader, not pane. */
+body.is-mobile .workspace-leaf-content[data-type="epub"] .view-content {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  overflow: hidden !important;
+}
+
+body.is-mobile .workspace-leaf-content[data-type="epub"] .epub-container {
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+}

@@ -1,0 +1,19 @@
+{
+  "promptDelete": false,
+  "foldIndent": true,
+  "foldHeading": true,
+  "showLineNumber": false,
+  "showIndentGuide": true,
+  "autoPairBrackets": true,
+  "focusNewTab": true,
+  "tabSize": 4,
+  "openBehavior": "",
+  "mobileQuickRibbonItem": "",
+  "newFileLocation": "folder",
+  "newFileFolderPath": "05 - Inbox",
+  "defaultViewMode": "source",
+  "alwaysUpdateLinks": true,
+  "propertiesInDocument": "visible",
+  "readableLineLength": true,
+  "spellcheck": false
+}

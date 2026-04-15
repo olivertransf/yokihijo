@@ -1,0 +1,9 @@
+{
+  "id": "bettercanvas-view",
+  "name": "BetterCanvas View",
+  "version": "1.0.0",
+  "minAppVersion": "1.0.0",
+  "description": "Opens Canvas LMS (siprep.instructure.com) inside Obsidian with BetterCanvas dark mode theme applied.",
+  "author": "local",
+  "isDesktopOnly": true
+}
