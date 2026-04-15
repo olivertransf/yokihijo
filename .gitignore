@@ -4,6 +4,8 @@
 # Except .obsidian config
 !.obsidian/
 !.obsidian/**
+!.github/
+!.github/README.md
 
 # Plugin state: API keys (Google Books / Book Search, REST API, etc.), tokens, feeds — never commit
 .obsidian/plugins/*/data.json
