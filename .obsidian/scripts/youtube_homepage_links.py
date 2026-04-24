@@ -3,9 +3,10 @@
 
 Close all Chrome windows before using --user-data-dir, or the profile may be locked.
 
-  cd .obsidian/scripts
-  python3 -m venv .venv && . .venv/bin/activate
-  pip install -r requirements-youtube-homepage.txt
+  # Venv lives outside iCloud (see run_sync_youtube_homepage.sh). Example:
+  #   python3 -m venv "$HOME/Library/Application Support/YokihijoObsidian/venvs/.venv"
+  #   "$HOME/Library/Application Support/YokihijoObsidian/venvs/.venv/bin/pip" install -r requirements-youtube-homepage.txt
+  #   source "$HOME/Library/Application Support/YokihijoObsidian/venvs/.venv/bin/activate"
 
   python youtube_homepage_links.py
 
@@ -29,6 +30,12 @@ Close all Chrome windows before using --user-data-dir, or the profile may be loc
 
 from __future__ import annotations
 
+# undetected-chromedriver imports distutils before setuptools can install the shim.
+try:
+    import setuptools  # noqa: F401
+except ImportError:
+    pass
+
 import argparse
 import os
 import re
@@ -42,7 +49,6 @@ from urllib.parse import parse_qs, urlparse
 _WATCH_ID_RE = re.compile(
     r'(?:v=|/watch\?v=|/embed/|"videoId"\s*:\s*")([0-9A-Za-z_-]{11})'
 )
-
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.chrome.options import Options
@@ -371,6 +377,48 @@ def _watch_urls_from_page_source(driver: webdriver.Chrome) -> set[str]:
     return out
 
 
+def _dismiss_youtube_or_google_consent(driver: webdriver.Chrome) -> bool:
+    """Click common EU/Google consent controls so the real homepage can render."""
+    js = r"""
+    (function () {
+      function visible(el) {
+        if (!el) return false;
+        const r = el.getBoundingClientRect();
+        return r.width > 0 && r.height > 0 && window.getComputedStyle(el).visibility !== "hidden";
+      }
+      const ids = ["introAgreeButton", "L2AGLb"];
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (visible(el)) {
+          try {
+            el.click();
+            return true;
+          } catch (err) {}
+        }
+      }
+      const labels = /^(Accept all|I agree|Accept|Agree|Alle akzeptieren|Accepter tout|Tout accepter)$/i;
+      const nodes = document.querySelectorAll("button, tp-yt-paper-button, ytd-button-renderer button, input[type='submit']");
+      for (const el of nodes) {
+        const t = (el.innerText || el.value || el.textContent || "").trim();
+        if (!labels.test(t)) continue;
+        if (!visible(el)) continue;
+        try {
+          el.click();
+          return true;
+        } catch (err) {}
+      }
+      return false;
+    })();
+    """
+    try:
+        clicked = bool(driver.execute_script(js))
+        if clicked:
+            time.sleep(1.8)
+        return clicked
+    except Exception:
+        return False
+
+
 def _collect_watch_links(driver: webdriver.Chrome) -> set[str]:
     out: set[str] = set()
     selectors = (
@@ -480,7 +528,40 @@ def _build_driver(
         kw: dict = {"options": opts, "use_subprocess": True, "headless": headless}
         if vm is not None:
             kw["version_main"] = vm
-        return uc.Chrome(**kw)
+        try:
+            return uc.Chrome(**kw)
+        except Exception as exc:
+            err = str(exc).lower()
+            if kw.get("use_subprocess", True) and (
+                "not reachable" in err or "cannot connect" in err or "session not created" in err
+            ):
+                print(
+                    "# undetected-chromedriver: retrying with use_subprocess=False "
+                    '(often fixes "chrome not reachable").',
+                    file=sys.stderr,
+                )
+                kw2 = {**kw, "use_subprocess": False}
+                try:
+                    return uc.Chrome(**kw2)
+                except Exception as exc2:
+                    exc = exc2
+                    err = str(exc2).lower()
+            print(
+                "# undetected-chromedriver failed to start Chrome.\n"
+                "# If you use --use-my-chrome-profile: Cmd+Q Google Chrome, wait a few seconds, retry.\n"
+                "# If you use --youtube-session: quit any Chrome window opened with that same session folder, "
+                "or run without --headless.\n"
+                "# Or attach to Chrome you started with --remote-debugging-port=9222: "
+                "`--debugger-address 127.0.0.1:9222`.\n"
+                f"# Underlying error: {exc}",
+                file=sys.stderr,
+            )
+            if "user data directory" in err or "already in use" in err or "singleton" in err or "lock" in err:
+                print(
+                    "# (Often: profile directory locked by another Chrome using the same --user-data-dir.)",
+                    file=sys.stderr,
+                )
+            raise
 
     opts = _chrome_option_args(
         user_data_dir,
@@ -544,7 +625,7 @@ def main() -> int:
     ap.add_argument(
         "--max-scrolls",
         type=int,
-        default=18,
+        default=40,
         metavar="N",
         help="Max scroll iterations (stops early if no new links).",
     )
@@ -564,14 +645,14 @@ def main() -> int:
     ap.add_argument(
         "--nav-timeout",
         type=float,
-        default=8.0,
+        default=22.0,
         metavar="SEC",
         help="Total seconds to reach youtube.com in the address bar (fail fast).",
     )
     ap.add_argument(
         "--wait",
         type=int,
-        default=10,
+        default=22,
         metavar="SEC",
         help="Max seconds to wait for first /watch?v= link after landing.",
     )
@@ -662,21 +743,47 @@ def main() -> int:
         _open_fresh_tab_for_navigation(driver, bool(args.fresh_tab))
         _log_tabs(driver, "after optional new tab")
         _navigate_to_youtube(driver, target, float(args.nav_timeout))
-        time.sleep(0.2)
+        # Headless often hydrates rich content late; consent walls also delay watch links.
+        post_nav = 4.5 if args.headless else 0.25
+        time.sleep(post_nav)
         try:
-            WebDriverWait(driver, args.wait, poll_frequency=0.12).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, 'a[href*="/watch?v="]'))
-            )
-        except TimeoutException:
-            print(
-                "# no watch links in DOM yet; scrolling to collect (slow feed or consent).",
-                file=sys.stderr,
-            )
+            driver.execute_script("window.scrollTo(0, 600);")
+        except Exception:
+            pass
+        time.sleep(0.35)
+        for attempt in range(3):
+            if _dismiss_youtube_or_google_consent(driver):
+                print("# dismissed a consent / cookie dialog (attempt %s)" % (attempt + 1), file=sys.stderr)
+            try:
+                WebDriverWait(driver, args.wait, poll_frequency=0.12).until(
+                    EC.presence_of_element_located((By.CSS_SELECTOR, 'a[href*="/watch?v="]'))
+                )
+                break
+            except TimeoutException:
+                if attempt < 2:
+                    print(
+                        "# no watch links in DOM yet; retry after consent / extra wait.",
+                        file=sys.stderr,
+                    )
+                    time.sleep(2.0)
+                    _dismiss_youtube_or_google_consent(driver)
+                else:
+                    print(
+                        "# no watch links in DOM yet; scrolling to collect (slow feed or consent).",
+                        file=sys.stderr,
+                    )
         urls = _scroll_collect(driver, args.max_scrolls, args.pause)
         if not urls:
+            if _dismiss_youtube_or_google_consent(driver):
+                print("# late consent click; re-scanning DOM once", file=sys.stderr)
+            time.sleep(2.5)
+            urls = sorted(_collect_watch_links(driver))
+        if not urls:
             print(
-                "# zero watch URLs — try: --url https://www.youtube.com/feed/trending, "
-                "or run without --headless once, or extend --wait / --max-scrolls.",
+                "# zero watch URLs — try: run once without --headless, complete any consent/sign-in, "
+                "then retry; or --debugger-address 127.0.0.1:9222 with Chrome started manually; "
+                "or extend --wait / --max-scrolls. Reinstall: pip install -r requirements-youtube-homepage.txt "
+                "(Python 3.13+: setuptools<74; this script pre-imports setuptools for undetected-chromedriver).",
                 file=sys.stderr,
             )
             return 1

@@ -6,14 +6,15 @@
   "translucency": true,
   "theme": "system",
   "enabledCssSnippets": [
+    "border-vertical-tabs-card-top-gap",
     "daily-notes-editor-title-padding",
     "media-shelf",
-    "claude-usage-compact",
     "velocity-no-titlebar-line",
     "whiter-text-dark",
     "task-genius-habit-heatmap",
     "ipad-font-slightly-larger",
-    "youtube-embed-full-width"
+    "youtube-embed-full-width",
+    "rss-dashboard-card-auto-height"
   ],
   "interfaceFontFamily": "Atkinson Hyperlegible",
   "monospaceFontFamily": "Atkinson Hyperlegible Mono,Source Code Pro",

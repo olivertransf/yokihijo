@@ -61,6 +61,27 @@ YouTube’s native feed URL (`youtube.com/feeds/videos.xml?channel_id=…`) **on
 
 To actually **receive** more than 15 entries, you need a different feed source (e.g. self-hosted [RSSHub](https://github.com/DIYgod/RSSHub) / [RSS-Bridge](https://github.com/RSS-Bridge/rss-bridge) with a YouTube route, or another proxy that builds a larger feed). Then set the feed URL in RSS Dashboard to that feed.
 
+## YouTube homepage → RSS Dashboard (synthetic feed)
+
+`sync_youtube_homepage_to_rss_dashboard.py` scrapes the signed-in YouTube homepage and writes the magic feed `__RSS_DASHBOARD_YOUTUBE_HOME__` into `rss-dashboard/data.json`.
+
+### YouTube sync Python venv (not in iCloud)
+
+Selenium and dependencies live under **`~/Library/Application Support/YokihijoObsidian/venvs/.venv`** so iCloud does not try to sync thousands of `site-packages` files. **`run_sync_youtube_homepage.sh`** uses that path automatically (override with **`YOUTUBE_RSS_VENV`** if you want a different directory). A spare copy from experiments may exist as **`…/venvs/.venv-youtube-homepage`**.
+
+Recreate after a clean macOS install:
+
+```bash
+python3 -m venv "$HOME/Library/Application Support/YokihijoObsidian/venvs/.venv"
+"$HOME/Library/Application Support/YokihijoObsidian/venvs/.venv/bin/pip" install -r "/path/to/vault/.obsidian/scripts/requirements-youtube-homepage.txt"
+```
+
+**Read / dismiss persistence:** Items you mark **read** in RSS Dashboard are collected before each merge (plus any `\"read\": true` entries in the vault archive). Those video ids are **skipped** on the next run, so they no longer appear under “YouTube home”. Starred / tags / saved are preserved for videos that stay unread.
+
+**Vault archive:** Each successful run upserts `04 - Archives/YouTube homepage RSS/seen-videos.json` and regenerates `Index.md` in that folder (created on first run). To surface a dismissed video again, edit `seen-videos.json` and set `\"read\": false` for that id (or remove the `read` key), then run another sync.
+
+Override the folder with `--archive-dir /path/to/folder`.
+
 ## Notes
 
 Obsidian does not run these scripts when RSS Dashboard refreshes. Use a **watcher** in a terminal (or a login Launch Agent) so strip runs after each save to `data.json`.

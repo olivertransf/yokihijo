@@ -1,7 +1,0 @@
-/* Files sidebar — slightly larger labels + a bit more row padding */
-.workspace-leaf-content[data-type="file-explorer"] {
-	--nav-item-size: calc(var(--font-ui-medium) * 1.0);
-	/* top | right | bottom | left — small bump over app defaults */
-	--nav-item-padding: calc(var(--size-4-1) + 2px) calc(var(--size-4-2) + 4px)
-		calc(var(--size-4-1) + 2px) calc(var(--size-4-6) + 4px);
-}

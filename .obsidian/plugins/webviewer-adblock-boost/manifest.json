@@ -1,0 +1,9 @@
+{
+  "id": "webviewer-adblock-boost",
+  "name": "Web Viewer Adblock Boost",
+  "version": "1.0.0",
+  "minAppVersion": "1.5.0",
+  "description": "YouTube-focused ad blocker for Obsidian Web Viewer and NetClip webviews, based on vBlockTube-style player response cleanup.",
+  "author": "local",
+  "isDesktopOnly": true
+}

@@ -1,0 +1,10 @@
+/* RSS Dashboard: let main pane flex instead of a short fixed inner height */
+.rss-dashboard-container .rss-dashboard-layout {
+  min-height: 0;
+}
+
+.rss-dashboard-container .rss-dashboard-main-content,
+.rss-dashboard-container .rss-dashboard-main {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+}

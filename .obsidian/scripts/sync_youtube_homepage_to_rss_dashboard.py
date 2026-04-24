@@ -5,20 +5,28 @@ The plugin is patched with a synthetic feed (magic URL) and a sidebar row
 \"YouTube home\" that shows only those items. \"All Feeds\" stays merged RSS
 (synthetic feed is excluded from that merge).
 
+Each run upserts `04 - Archives/YouTube homepage RSS/seen-videos.json` and
+regenerates `Index.md` for every video id returned by the scraper. Video ids
+marked read in RSS Dashboard (or already `\"read\": true` in seen-videos.json)
+are omitted from the synthetic feed on the next sync so they do not reappear.
+
   cd .obsidian/scripts
   python3 sync_youtube_homepage_to_rss_dashboard.py
-  python3 sync_youtube_homepage_to_rss_dashboard.py --youtube-session --headless
+  # Default scraper uses the isolated YoutubeSeleniumChrome profile (--youtube-session).
+  # Your real Google Chrome profile instead (must Cmd+Q Chrome first): YOUTUBE_RSS_CHROME=main python3 ...
 
-  # Or: ./run_sync_youtube_homepage.sh  (uses .venv; see script header for daily
-  # launchd + optional Obsidian startup via Shell commands plugin.)
+  # Or: ./run_sync_youtube_homepage.sh  (venv in ~/Library/Application Support/YokihijoObsidian/venvs; see script header.)
+  # Force an immediate run (ignore last-sync age): ./run_sync_youtube_homepage.sh --force
+  # Default is visible Chrome. Headless (often flaky on newer Chrome): YOUTUBE_RSS_SYNC_HEADLESS=1 ./run_sync_youtube_homepage.sh --force
 
-Quit Chrome before running if using a on-disk profile (see youtube_homepage_links.py).
+Quit Google Chrome before sync only when using YOUTUBE_RSS_CHROME=main (see youtube_homepage_links.py).
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -38,10 +46,24 @@ _DASHBOARD_DATA = _VAULT_OBSIDIAN / "plugins" / "rss-dashboard" / "data.json"
 _SCRAPER = _SCRIPTS / "youtube_homepage_links.py"
 
 _VIDEO_ID = re.compile(r"(?:v=|/watch\?v=|youtu\.be/)([0-9A-Za-z_-]{11})")
+_GUID_YT_VIDEO = re.compile(r"^yt:video:([0-9A-Za-z_-]{11})\s*$")
+
+_VAULT_ROOT = _SCRIPTS.parent.parent
+_ARCHIVE_REL = Path("04 - Archives") / "YouTube homepage RSS"
+_SEEN_JSON_NAME = "seen-videos.json"
+_INDEX_MD_NAME = "Index.md"
+_README_MD_NAME = "README.md"
 
 
 def _video_id_from_url(url: str) -> str | None:
     m = _VIDEO_ID.search(url.strip())
+    return m.group(1) if m else None
+
+
+def _video_id_from_guid(guid: str) -> str | None:
+    if not guid or not isinstance(guid, str):
+        return None
+    m = _GUID_YT_VIDEO.match(guid.strip())
     return m.group(1) if m else None
 
 
@@ -91,11 +113,11 @@ def _run_scraper(extra_args: list[str]) -> list[str]:
     return urls
 
 
-def _build_items(urls: list[str], skip_oembed: bool) -> list[dict]:
-    items: list[dict] = []
-    now = datetime.now(timezone.utc)
-    tag_youtube = {"name": "YouTube", "color": "#ff0000"}
-    for i, url in enumerate(urls):
+def _ordered_rows(urls: list[str], skip_oembed: bool) -> list[tuple[str, str, str, str, int]]:
+    """Return (url, video_id, title, author, index) for each valid watch URL."""
+    rows: list[tuple[str, str, str, str, int]] = []
+    j = 0
+    for url in urls:
         vid = _video_id_from_url(url)
         if not vid:
             continue
@@ -103,31 +125,189 @@ def _build_items(urls: list[str], skip_oembed: bool) -> list[dict]:
             title, author = f"YouTube video ({vid})", "YouTube"
         else:
             title, author = _oembed_title(vid)
-        pub = (now - timedelta(seconds=i)).strftime("%Y-%m-%dT%H:%M:%S+00:00")
-        items.append(
-            {
-                "title": title,
-                "link": f"https://www.youtube.com/watch?v={vid}",
-                "description": "",
-                "content": "",
-                "pubDate": pub,
-                "guid": f"yt:video:{vid}",
-                "read": False,
-                "starred": False,
-                "tags": [tag_youtube],
-                "feedTitle": DEFAULT_FEED_TITLE,
-                "feedUrl": MAGIC_FEED_URL,
-                "coverImage": f"https://img.youtube.com/vi/{vid}/maxresdefault.jpg",
-                "summary": "",
-                "author": author,
-                "saved": False,
-                "mediaType": "video",
-                "explicit": False,
-                "image": "",
-                "videoId": vid,
-            }
+        rows.append((url, vid, title, author, j))
+        j += 1
+    return rows
+
+
+def _item_dict(
+    vid: str,
+    title: str,
+    author: str,
+    seq: int,
+    *,
+    now: datetime,
+    prev: dict | None,
+) -> dict:
+    tag_youtube = {"name": "YouTube", "color": "#ff0000"}
+    pub = (now - timedelta(seconds=seq)).strftime("%Y-%m-%dT%H:%M:%S+00:00")
+    item = {
+        "title": title,
+        "link": f"https://www.youtube.com/watch?v={vid}",
+        "description": "",
+        "content": "",
+        "pubDate": pub,
+        "guid": f"yt:video:{vid}",
+        "read": False,
+        "starred": False,
+        "tags": [tag_youtube],
+        "feedTitle": DEFAULT_FEED_TITLE,
+        "feedUrl": MAGIC_FEED_URL,
+        "coverImage": f"https://img.youtube.com/vi/{vid}/maxresdefault.jpg",
+        "summary": "",
+        "author": author,
+        "saved": False,
+        "mediaType": "video",
+        "explicit": False,
+        "image": "",
+        "videoId": vid,
+    }
+    if prev and isinstance(prev, dict):
+        for k in ("starred", "tags", "saved"):
+            if k in prev:
+                item[k] = prev[k]
+    return item
+
+
+def _read_video_ids_from_feed(items: list) -> set[str]:
+    out: set[str] = set()
+    for it in items:
+        if not isinstance(it, dict) or not it.get("read"):
+            continue
+        vid = _video_id_from_url(it.get("link") or "") or _video_id_from_guid(it.get("guid") or "")
+        if vid:
+            out.add(vid)
+    return out
+
+
+def _read_video_ids_from_seen(seen: dict) -> set[str]:
+    out: set[str] = set()
+    raw = seen.get("videos")
+    if not isinstance(raw, dict):
+        return out
+    for vid, meta in raw.items():
+        if isinstance(meta, dict) and meta.get("read"):
+            out.add(str(vid))
+    return out
+
+
+def _load_seen(path: Path) -> dict:
+    if not path.is_file():
+        return {"version": 1, "videos": {}}
+    try:
+        with path.open(encoding="utf-8") as f:
+            data = json.load(f)
+    except (OSError, json.JSONDecodeError):
+        return {"version": 1, "videos": {}}
+    if not isinstance(data, dict):
+        return {"version": 1, "videos": {}}
+    data.setdefault("version", 1)
+    v = data.get("videos")
+    if not isinstance(v, dict):
+        data["videos"] = {}
+    return data
+
+
+def _old_items_by_video_id(items: list) -> dict[str, dict]:
+    by_vid: dict[str, dict] = {}
+    for it in items:
+        if not isinstance(it, dict):
+            continue
+        vid = _video_id_from_url(it.get("link") or "") or _video_id_from_guid(it.get("guid") or "")
+        if vid:
+            by_vid[vid] = it
+    return by_vid
+
+
+def _upsert_seen_and_index(
+    archive_dir: Path,
+    rows: list[tuple[str, str, str, str, int]],
+    read_ids: set[str],
+    *,
+    now: datetime,
+    dry_run: bool,
+) -> None:
+    """Update seen-videos.json and regenerate Index.md under archive_dir."""
+    seen_path = archive_dir / _SEEN_JSON_NAME
+    index_path = archive_dir / _INDEX_MD_NAME
+    readme_path = archive_dir / _README_MD_NAME
+    now_iso = now.strftime("%Y-%m-%dT%H:%M:%SZ")
+    if dry_run:
+        return
+
+    archive_dir.mkdir(parents=True, exist_ok=True)
+    seen = _load_seen(seen_path)
+    videos = seen.setdefault("videos", {})
+    assert isinstance(videos, dict)
+
+    for _url, vid, title, author, _i in rows:
+        link = f"https://www.youtube.com/watch?v={vid}"
+        prev = videos.get(vid) if isinstance(videos.get(vid), dict) else {}
+        first = prev.get("first_seen") if isinstance(prev, dict) else None
+        if not first or not isinstance(first, str):
+            first = now_iso
+        is_read = vid in read_ids
+        videos[vid] = {
+            "first_seen": first,
+            "last_seen": now_iso,
+            "title": title,
+            "link": link,
+            "author": author,
+            "read": is_read,
+        }
+
+    tmp = seen_path.with_suffix(seen_path.suffix + ".tmp")
+    tmp.write_text(json.dumps(seen, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    tmp.replace(seen_path)
+
+    # Human-readable index (newest last_seen first)
+    lines: list[str] = [
+        "# YouTube homepage RSS — index",
+        "",
+        f"Auto-generated on **{now_iso}** by `sync_youtube_homepage_to_rss_dashboard.py`.",
+        "",
+        "Videos marked **read** in RSS Dashboard are dropped from the synthetic “YouTube home” feed on the **next** sync. To show one again, edit `"
+        + _SEEN_JSON_NAME
+        + "` in this folder and set `\"read\": false` for that video id (or remove the `read` key).",
+        "",
+        "## Entries (newest `last_seen` first)",
+        "",
+    ]
+    entries: list[tuple[str, dict]] = []
+    for vid, meta in videos.items():
+        if isinstance(meta, dict):
+            entries.append((str(vid), meta))
+    entries.sort(key=lambda x: (x[1].get("last_seen") or ""), reverse=True)
+    for vid, meta in entries:
+        title = (meta.get("title") or vid).replace("\n", " ").strip()
+        link = meta.get("link") or f"https://www.youtube.com/watch?v={vid}"
+        ls = meta.get("last_seen") or ""
+        rd = "**read**" if meta.get("read") else "unread"
+        lines.append(f"- {ls} — [{title}]({link}) — `{vid}` — {rd}")
+    lines.append("")
+    index_path.write_text("\n".join(lines), encoding="utf-8")
+
+    if not readme_path.is_file():
+        readme_path.write_text(
+            "\n".join(
+                [
+                    "# YouTube homepage RSS archive",
+                    "",
+                    "This folder is maintained by `.obsidian/scripts/sync_youtube_homepage_to_rss_dashboard.py`.",
+                    "",
+                    "- **`"
+                    + _SEEN_JSON_NAME
+                    + "`** — Upserted catalog of every video id seen on the homepage scrape (titles, links, `read` flag).",
+                    "- **`"
+                    + _INDEX_MD_NAME
+                    + "`** — Regenerated list for quick browsing in Obsidian.",
+                    "",
+                    "Marking an item **read** in RSS Dashboard is picked up on the next sync: that video id is omitted from the synthetic feed and stored as `\"read\": true` here so it stays hidden even if `data.json` is rebuilt.",
+                    "",
+                ]
+            ),
+            encoding="utf-8",
         )
-    return items
 
 
 def _load_data(path: Path) -> dict:
@@ -171,6 +351,12 @@ def main() -> int:
         action="store_true",
         help="Only read data.json: report whether the synthetic homepage feed exists (no Chrome).",
     )
+    ap.add_argument(
+        "--archive-dir",
+        type=Path,
+        default=None,
+        help=f"Vault folder for seen-videos.json + Index.md (default: {_VAULT_ROOT / _ARCHIVE_REL}).",
+    )
     args, scraper_args = ap.parse_known_args()
     if args.data_status:
         path: Path = args.data_json
@@ -195,16 +381,35 @@ def main() -> int:
         return 1
 
     if not scraper_args:
-        scraper_args = ["--youtube-session", "--headless"]
-
-    urls = _run_scraper(scraper_args)
-    if not urls:
-        print("No watch URLs from scraper.", file=sys.stderr)
-        return 1
-    items = _build_items(urls, skip_oembed=args.skip_oembed)
-    if not items:
-        print("No valid video IDs parsed from URLs.", file=sys.stderr)
-        return 1
+        # Default: isolated profile (same as earlier working setup). Main Chrome is opt-in — headless + real profile often crashes (chrome not reachable).
+        _chrome = (os.environ.get("YOUTUBE_RSS_CHROME") or "session").strip().lower()
+        _profile_flag = (
+            "--use-my-chrome-profile"
+            if _chrome in ("main", "google", "chrome", "real")
+            else "--youtube-session"
+        )
+        _hint = (
+            "quit Google Chrome (Cmd+Q) before sync — real profile cannot run while Chrome is open."
+            if _profile_flag == "--use-my-chrome-profile"
+            else "close any Chrome using YoutubeSeleniumChrome (e.g. from open_chrome_youtube_session.py) before sync."
+        )
+        print(f"# sync: Chrome mode {_chrome!r} → {_profile_flag}; {_hint}", file=sys.stderr)
+        # Extra scrolls help load below-the-fold homepage shorts (RSS Dashboard shows full list for YT home).
+        scraper_args = [
+            _profile_flag,
+            "--max-scrolls",
+            "48",
+            "--pause",
+            "0.5",
+            "--nav-timeout",
+            "28",
+            "--wait",
+            "26",
+        ]
+        # Visible window by default (headless + uc often hits "chrome not reachable"). Opt in to headless:
+        _hl = (os.environ.get("YOUTUBE_RSS_SYNC_HEADLESS") or "").strip().lower()
+        if _hl in ("1", "true", "yes", "on"):
+            scraper_args.append("--headless")
 
     data_path: Path = args.data_json
     if not data_path.is_file():
@@ -216,6 +421,46 @@ def main() -> int:
     if not isinstance(feeds, list):
         print("data.json: missing feeds array", file=sys.stderr)
         return 2
+
+    archive_dir = args.archive_dir or (_VAULT_ROOT / _ARCHIVE_REL)
+    seen_path = archive_dir / _SEEN_JSON_NAME
+    seen = _load_seen(seen_path)
+    idx_existing = next((i for i, f in enumerate(feeds) if isinstance(f, dict) and f.get("url") == MAGIC_FEED_URL), -1)
+    old_items: list = []
+    if idx_existing >= 0:
+        old_feed = feeds[idx_existing]
+        if isinstance(old_feed, dict):
+            raw_items = old_feed.get("items")
+            if isinstance(raw_items, list):
+                old_items = raw_items
+
+    read_ids = _read_video_ids_from_feed(old_items) | _read_video_ids_from_seen(seen)
+
+    urls = _run_scraper(scraper_args)
+    if not urls:
+        print("No watch URLs from scraper.", file=sys.stderr)
+        return 1
+
+    rows = _ordered_rows(urls, skip_oembed=args.skip_oembed)
+    if not rows:
+        print("No valid video IDs parsed from URLs.", file=sys.stderr)
+        return 1
+
+    old_by_vid = _old_items_by_video_id(old_items)
+    now = datetime.now(timezone.utc)
+    items: list[dict] = []
+    for _url, vid, title, author, seq in rows:
+        if vid in read_ids:
+            continue
+        items.append(_item_dict(vid, title, author, seq, now=now, prev=old_by_vid.get(vid)))
+
+    if not items:
+        n_read = sum(1 for _u, v, *_r in rows if v in read_ids)
+        print(
+            f"All {len(rows)} homepage video(s) are marked read; writing empty synthetic feed "
+            f"({n_read} skipped).",
+            file=sys.stderr,
+        )
 
     synthetic = {
         "title": DEFAULT_FEED_TITLE,
@@ -236,12 +481,22 @@ def main() -> int:
     else:
         feeds.insert(0, synthetic)
 
+    _upsert_seen_and_index(archive_dir, rows, read_ids, now=now, dry_run=args.dry_run)
+
     if args.dry_run:
-        print(f"Would write {len(items)} homepage items to feed {MAGIC_FEED_URL!r}.")
+        print(
+            f"Would write {len(items)} homepage item(s) to feed {MAGIC_FEED_URL!r} "
+            f"(scraped {len(rows)}, read/skipped {len(read_ids & {r[1] for r in rows})})."
+        )
         return 0
 
     _atomic_write(data_path, data)
-    print(f"Wrote {len(items)} items to {data_path} (feed {MAGIC_FEED_URL}).")
+    skipped = len(rows) - len(items)
+    msg = f"Wrote {len(items)} item(s) to {data_path} (feed {MAGIC_FEED_URL})."
+    if skipped:
+        msg += f" Skipped {skipped} read."
+    print(msg)
+    print(f"Archive: {archive_dir / _SEEN_JSON_NAME} (+ {_INDEX_MD_NAME})")
     return 0
 
 

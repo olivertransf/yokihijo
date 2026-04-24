@@ -32,7 +32,7 @@ Each plugin lives in `.obsidian/plugins/<id>/` with `main.js`, `manifest.json`, 
 
 Two-layer approach — **read the full explanation in `.obsidian/scripts/README.md`** before modifying:
 
-- **Desktop**: `rss-dashboard/main.js` is patched — `processYouTubeFeed` and a second filter in `parseFeed`. **Re-apply both patches after any RSS Dashboard upgrade.**
+- **Desktop**: `rss-dashboard/main.js` is patched — `processYouTubeFeed` and a second filter in `parseFeed`, plus **`openArticleInNewTab` uses `getLeaf(q.Platform.isMobile?"tab":"split")`** so the reader opens beside the dashboard (split) on desktop instead of only a new tab in the same tab group, plus **default folder `__RSS_DASHBOARD_YT_HOME__`** when `display.defaultFilter` is `all` (constructor used to set `currentFolder` to `null` after init; that branch is patched). **Re-apply all patches after any RSS Dashboard upgrade.**
 - **Mobile (iOS)**: The `rss-dashboard-shorts-strip` plugin handles this (cannot patch `main.js` on mobile).
 
 ### Strip/watch scripts (run from vault root)

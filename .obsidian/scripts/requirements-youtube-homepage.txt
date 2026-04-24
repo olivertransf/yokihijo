@@ -1,4 +1,5 @@
 selenium>=4.15.0
-setuptools>=69.0.0
+# setuptools 74+ drops stdlib-style `distutils` on Python 3.13+; undetected-chromedriver still imports it.
+setuptools>=69.0.0,<74.0.0
 browser-cookie3>=0.19.1
 undetected-chromedriver>=3.5.5

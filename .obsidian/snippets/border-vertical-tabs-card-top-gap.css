@@ -1,0 +1,28 @@
+/*
+  Vertical Tabs: with auto-hide horizontal tabs (body.vt-auto-hide-horizontal-tabs),
+  the plugin hides the root tab row when the left sidebar is open:
+
+  .mod-sidedock.mod-left-split:not(.is-sidedock-collapsed) ~ .workspace-split.mod-root
+    .workspace-tabs > .workspace-tab-header-container { display: none; }
+
+  Border card layout still expects that strip, so the main card sits flush under the
+  title bar. Restore ~16px (Border-style gap) on the root workspace-tabs only when
+  VT is in that mode, the sidebar matches the hide rule, and Border card layout is on.
+
+  Tighter gap: e.g. margin-top: 12px; or margin-top: var(--size-4-3);
+*/
+
+body.vt-auto-hide-horizontal-tabs:not(
+    .is-mobile
+  ).theme-light.card-layout-open-light
+  .mod-sidedock.mod-left-split:not(.is-sidedock-collapsed)
+  ~ .workspace-split.mod-root
+  .workspace-tabs,
+body.vt-auto-hide-horizontal-tabs:not(
+    .is-mobile
+  ).theme-dark.card-layout-open-dark
+  .mod-sidedock.mod-left-split:not(.is-sidedock-collapsed)
+  ~ .workspace-split.mod-root
+  .workspace-tabs {
+  margin-top: var(--size-4-4);
+}

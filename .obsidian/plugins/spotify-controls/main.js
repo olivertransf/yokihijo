@@ -33,6 +33,19 @@ function runAppleScript(script) {
   });
 }
 
+/** True only if Spotify.app is already running — avoids `tell application "Spotify"` relaunching it. */
+const isSpotifyProcessRunningScript =
+  'tell application "System Events" to return ((count of (every application process whose name is "Spotify")) > 0)';
+
+async function isSpotifyRunning() {
+  try {
+    const out = await runAppleScript(isSpotifyProcessRunningScript);
+    return out === 'true';
+  } catch {
+    return false;
+  }
+}
+
 function toSpotifyPlaylistUri(input) {
   const s = String(input || '').trim();
   if (!s) return '';
@@ -233,6 +246,21 @@ class SpotifyView extends ItemView {
 
   async poll() {
     try {
+      if (!(await isSpotifyRunning())) {
+        this.state = {
+          track: '',
+          artist: '',
+          album: '',
+          artwork: '',
+          playing: false,
+          position: 0,
+          duration: 0,
+          volume: this.state?.volume ?? 50,
+          shuffle: false,
+        };
+        this.updateUI();
+        return;
+      }
       const [track, artist, album, artwork, playerState, pos, dur, vol, shuffle] = await Promise.all([
         runAppleScript(S.track),
         runAppleScript(S.artist),
@@ -395,6 +423,10 @@ class SpotifyControlsPlugin extends Plugin {
 
   async updateStatusBar() {
     try {
+      if (!(await isSpotifyRunning())) {
+        this.statusBarItem.setText('');
+        return;
+      }
       const state = await runAppleScript(S.state);
       if (state === 'playing') {
         const [track, artist] = await Promise.all([runAppleScript(S.track), runAppleScript(S.artist)]);
